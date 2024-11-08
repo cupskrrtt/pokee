@@ -2,20 +2,46 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@layer base {
+	:root {
+		/* Primary Colors */
+		--color-primary-red: #ff0000; /* Poké Ball Red */
+		--color-primary-blue: #3b4cca; /* Pokémon Blue */
+		--color-primary-yellow: #ffcc00; /* Pikachu Yellow */
+		--color-primary-green: #3dc73d; /* Grass Green */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+		/* Secondary Colors */
+		--color-secondary-dark-blue: #0a285f; /* Dark blue for accents */
+		--color-secondary-light-blue: #75a1ff; /* Lighter blue for hover states */
+		--color-secondary-orange: #ffa500; /* Fire-type Orange */
+		--color-secondary-brown: #8b4513; /* Ground-type Brown */
+
+		/* Neutral Colors */
+		--color-gray-100: #f3f4f6; /* Background gray */
+		--color-gray-200: #e5e7eb;
+		--color-gray-300: #d1d5db;
+		--color-gray-400: #9ca3af;
+		--color-gray-500: #6b7280;
+		--color-gray-600: #4b5563;
+		--color-gray-700: #374151;
+		--color-gray-800: #1f2937;
+		--color-gray-900: #111827;
+
+		/* Status Colors */
+		--color-status-success: #3dc73d; /* HP/health bar */
+		--color-status-warning: #ffcc00; /* Exp/level-up bar */
+		--color-status-danger: #ff0000; /* Warning/Error */
+		--color-status-info: #3b4cca; /* Info highlights */
+
+		/* Typography Colors */
+		--color-text-primary: #1f2937; /* Default text color */
+		--color-text-secondary: #374151; /* Secondary text */
+		--color-text-inverse: #ffffff; /* Text on dark backgrounds */
+	}
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+	color: var(--foreground);
+	background: var(--background);
+	font-family: Arial, Helvetica, sans-serif;
 }
