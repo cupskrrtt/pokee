@@ -1,4 +1,4 @@
-export interface ItemsDto {
+export interface ItemDto {
 	attributes?: {
 		name: string;
 		url: string;
