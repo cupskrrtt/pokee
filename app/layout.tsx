@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
-import Providers from "./provider";
+import { unstable_serialize } from "swr";
 
 export const metadata: Metadata = {
 	title: "Create Next App",
@@ -21,9 +21,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<body className={`${poppins.className} antialiased`}>
-				<Providers>{children}</Providers>
-			</body>
+			<body className={`${poppins.className} antialiased`}>{children}</body>
 		</html>
 	);
 }

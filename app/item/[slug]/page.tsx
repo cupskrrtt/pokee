@@ -1,43 +1,49 @@
-import { BerryDto } from "@/types/Dto";
+import { BerryDto, ItemDto } from "@/types/Dto";
 import Image from "next/image";
 
-async function getItem(slug: string) {
-	const res = await fetch(`https://pokeapi.co/api/v2/item/${slug}-berry`);
+async function getItem(slug: string): Promise<ItemDto> {
+	const res = await fetch(`https://pokeapi.co/api/v2/item/${slug}`);
+	if (!res.ok) {
+		throw new Error("Failed to fetch data");
+	}
 	return res.json();
 }
 
-async function getBerry(slug: string) {
+async function getBerry(slug: string): Promise<BerryDto> {
 	const res = await fetch(`https://pokeapi.co/api/v2/berry/${slug}`);
+	if (!res.ok) {
+		throw new Error("Failed to fetch data");
+	}
 	return res.json();
 }
 
-export default async function BerryDetailPage({
+export default async function ItemDetailPage({
 	params,
 }: { params: Promise<{ slug: string }> }) {
 	const slug = (await params).slug;
-	const berrySlug = slug.split("-")[0];
+	const berrySlug = slug.substring(0, slug.lastIndexOf("-berry"));
+	const itemData = await getItem(slug);
+	const berryData = await getBerry(berrySlug);
 
-	const itemData = getItem(slug);
-	const berryData = getBerry(berrySlug);
-
-	const [item, berry]: [ItemsDto, BerryDto] = await Promise.all([
-		itemData,
-		berryData,
-	]);
+	const [item, berry] = await Promise.all([itemData, berryData]);
 
 	return (
 		<div className="container mx-auto py-4 px-8 md:px-16 lg:px-24 xl:px-32 2xl:px-40">
 			<div className="border flex flex-col gap-2 px-4 py-2 rounded-md bg-gray-100">
 				<div className="flex w-full">
 					<Image
-						src={item.sprites.default}
+						src={
+							item.sprites.default == null
+								? "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/mega-pendant.png"
+								: item?.sprites.default
+						}
 						alt={item.name}
 						width={80}
 						height={80}
 					/>
 					<div className="flex flex-col justify-center items-start w-full">
 						<h1 className="font-bold text-xl text-text-primary capitalize">
-							{berry.name}
+							{item.name.split("-").join(" ")}
 						</h1>
 						<div className="flex justify-start gap-2 items-center w-full flex-wrap">
 							<p className="text-xs font-semibold bg-primary-yellow text-text-primary py-1 px-2 rounded-xl capitalize">
@@ -62,18 +68,13 @@ export default async function BerryDetailPage({
 				<p className="text-sm">
 					{
 						item.flavor_text_entries
-							.filter(
-								(x) =>
-									x.language.name === "en" &&
-									x.version_group.name === "sun-moon",
-							)
-							.at(0)?.text
+							.filter((x) => x.language.name === "en")
+							.at(-1)?.text
 					}
 				</p>
 				<hr className="border-[1px] border-gray-200" />
 				<h2 className="font-semibold text-md text-text-primary">Basic Info</h2>
 				<div className="flex flex-col">
-					{/*TODO: edit basic info*/}
 					<div className="flex flex-col gap-2">
 						<div className="flex flex-col">
 							<p className="text-sm">Berry Size</p>
@@ -115,12 +116,12 @@ export default async function BerryDetailPage({
 						<div className="flex flex-col">
 							<p className="text-sm">Fling Effect</p>
 							<p className="capitalize text-sm font-semibold">
-								{item.fling_effect.name.split("-").join(" ")}
+								{item.fling_effect?.name}
 							</p>
 						</div>
 						<div className="flex flex-col">
 							<p className="text-sm">Fling Power</p>
-							<p className="text-sm font-semibold"> {item.fling_power}</p>
+							<p className="text-sm font-semibold">{item.fling_power}</p>
 						</div>
 					</div>
 				</div>
@@ -132,7 +133,6 @@ export default async function BerryDetailPage({
 							<p className="capitalize text-sm">{x.flavor.name}</p>
 							<p className="capitalize text-sm">{x.potency}</p>
 						</div>
-						{/*Find a way to make the progress bar value color to change*/}
 						<progress
 							value={x.potency}
 							max={100}
